@@ -1,0 +1,22 @@
+<div class="speed-selector">
+  <label>
+    Reading speed: <strong>{{ wpm }} WPM</strong>
+  </label>
+
+  <input
+    type="range"
+    [min]="minWpm"
+    [max]="maxWpm"
+    [step]="step"
+    [(ngModel)]="wpm"
+    (input)="onWpmChange()"
+  />
+
+  <input
+    type="number"
+    [(ngModel)]="wpm"
+    [min]="minWpm"
+    [max]="maxWpm"
+    (change)="onWpmChange()"
+  />
+</div>

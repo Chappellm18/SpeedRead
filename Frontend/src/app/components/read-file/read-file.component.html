@@ -1,0 +1,21 @@
+<div class="reader-container">
+  <div class="word-display">
+    {{ currentWord || '—' }}
+  </div>
+
+  <div class="controls">
+    <label>
+      ms / word:
+      <input
+        type="number"
+        [(ngModel)]="intervalMs"
+        min="50"
+        step="50"
+      />
+    </label>
+
+    <button (click)="start()">Start</button>
+    <button (click)="stop()">Pause</button>
+    <button (click)="reset()">Reset</button>
+  </div>
+</div>

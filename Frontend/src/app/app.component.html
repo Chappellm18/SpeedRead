@@ -1,0 +1,6 @@
+<app-upload-file (fileParsed)="fileContent = $event"></app-upload-file>
+<app-speed-selector [wpm]="intervalMs" (speedChange)="intervalMs = $event"></app-speed-selector>
+<app-read-file [text]="fileContent" [intervalMs]="intervalMs"></app-read-file>
+
+
+<app-footer></app-footer>
