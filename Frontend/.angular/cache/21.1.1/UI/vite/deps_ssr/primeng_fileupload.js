@@ -7,16 +7,11 @@ import {
   UploadIcon
 } from "./chunk-FO3ZVARS.js";
 import {
-  ProgressBar
-} from "./chunk-VYUN4PJJ.js";
-import {
-  DomSanitizer,
-  HttpClient,
-  HttpEventType
-} from "./chunk-HW6E5RW5.js";
-import {
   Badge
 } from "./chunk-EROHBEWF.js";
+import {
+  ProgressBar
+} from "./chunk-VYUN4PJJ.js";
 import {
   BaseComponent,
   BaseStyle,
@@ -24,6 +19,11 @@ import {
   BindModule,
   PARENT_INSTANCE
 } from "./chunk-R4MYO4W3.js";
+import {
+  DomSanitizer,
+  HttpClient,
+  HttpEventType
+} from "./chunk-HW6E5RW5.js";
 import {
   P,
   PrimeTemplate,

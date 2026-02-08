@@ -1,70 +1,69 @@
 <div class="card upload-card">
-  <p-fileUpload
-    name="files[]"
-    [multiple]="true"
+  <!-- Hidden file input -->
+  <input
+    #fileInput
+    type="file"
+    multiple
     accept=".txt,.docx,image/*"
-    maxFileSize="1000000"
-    [customUpload]="true"
-    (onSelect)="onSelectedFiles($event)"
-    (uploadHandler)="onUpload()"
-  >
-    <!-- HEADER -->
-    <ng-template #header let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback">
-      <div class="upload-header">
-        <div class="actions">
-          <p-button icon="pi pi-images" rounded outlined (onClick)="chooseCallback()" />
-          <p-button
-            icon="pi pi-cloud-upload"
-            rounded
-            outlined
-            [disabled]="!files?.length"
-            (onClick)="onUpload()"
-          />
-          <p-button
-            icon="pi pi-times"
-            rounded
-            outlined
-            [disabled]="!files?.length"
-            (onClick)="onClear(clearCallback)"
-          />
-        </div>
+    (change)="onSelectedFiles($event)"
+    hidden
+  />
 
-        <p-progressBar
-          [value]="totalSizePercent"
-          [showValue]="false"
-          class="progress"
-        />
-        <small>{{ totalSize | number }} / 1,000,000 bytes</small>
+  <!-- HEADER -->
+  <div class="upload-header">
+    <div class="actions">
+      <button type="button" (click)="fileInput.click()">
+        Browse
+      </button>
+
+      <button
+        type="button"
+        [disabled]="!files.length"
+        (click)="onUpload()"
+      >
+        Upload
+      </button>
+
+      <button
+        type="button"
+        [disabled]="!files.length"
+        (click)="onClear()"
+      >
+        Remove
+      </button>
+    </div>
+
+    <div class="progress-wrapper">
+      <div class="progress-bar">
+        <div
+          class="progress-fill"
+          [style.width.%]="totalSizePercent"
+        ></div>
       </div>
-    </ng-template>
+      <small>{{ totalSize | number }} / 1,000,000 bytes</small>
+    </div>
+  </div>
 
-    <!-- CONTENT -->
-    <ng-template #content let-files>
-      <div class="file-grid" *ngIf="files?.length">
-        <div class="file-card" *ngFor="let file of files; let i = index">
-          <img *ngIf="file.objectURL" [src]="file.objectURL" />
+  <!-- CONTENT -->
+  <div class="file-grid" *ngIf="files.length">
+    <div class="file-card" *ngFor="let file of files; let i = index">
+      <img
+        *ngIf="file.objectURL"
+        [src]="file.objectURL"
+        alt="preview"
+      />
 
-          <strong>{{ file.name }}</strong>
-          <span class="muted">{{ formatSize(file.size) }}</span>
+      <strong>{{ file.name }} </strong>
+      <span class="muted">{{ formatSize(file.size) }} </span>
+      <button
+        type="button"
+        class="remove-btn"
+        (click)="removeFile(i)"
+      >
+        Remove
+      </button>
+    </div>
+  </div>
 
-          <p-badge value="Pending" />
-
-          <p-button
-            icon="pi pi-times"
-            rounded
-            outlined
-            (click)="removeFile(i)"
-          />
-        </div>
-      </div>
-    </ng-template>
-
-    <!-- EMPTY -->
-    <ng-template #empty>
-      <div class="empty-state">
-        <i class="pi pi-cloud-upload"></i>
-        <p>Drag & drop files here</p>
-      </div>
-    </ng-template>
-  </p-fileUpload>
+ 
 </div>

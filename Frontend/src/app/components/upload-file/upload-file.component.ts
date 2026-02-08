@@ -1,50 +1,70 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FileUploadModule } from 'primeng/fileupload';
-import { ButtonModule } from 'primeng/button';
-import { BadgeModule } from 'primeng/badge';
-import { ProgressBarModule } from 'primeng/progressbar';
-import * as mammoth from 'mammoth';
 import { CommonModule, DecimalPipe } from '@angular/common';
+import * as mammoth from 'mammoth';
 
 @Component({
   selector: 'app-upload-file',
   standalone: true,
   imports: [
-    FileUploadModule,
-    ButtonModule,
-    BadgeModule,
-    ProgressBarModule,
-    DecimalPipe,
-    CommonModule
+    CommonModule,
+    DecimalPipe
   ],
   templateUrl: './upload-file.component.html'
 })
 export class UploadFileComponent {
   @Output() fileParsed = new EventEmitter<string>();
 
-  files: File[] = [];
+  files: (File & { objectURL?: string })[] = [];
   totalSize = 0;
   totalSizePercent = 0;
 
+  private readonly MAX_SIZE = 1_000_000;
+
   // ---------- UI HANDLERS ----------
 
-  onSelectedFiles(event: any) {
-    this.files = event.currentFiles;
-    this.totalSize = this.files.reduce((sum, f) => sum + f.size, 0);
-    this.totalSizePercent = Math.min((this.totalSize / 1_000_000) * 100, 100);
+  onSelectedFiles(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files) return;
+
+    this.files = Array.from(input.files).map(file => {
+      const isImage = file.type.startsWith('image/');
+      return Object.assign(file, {
+        objectURL: isImage ? URL.createObjectURL(file) : undefined
+      });
+    });
+
+    this.recalculateSize();
+    input.value = ''; // allow re-selecting same files
   }
 
   removeFile(index: number) {
-    this.totalSize -= this.files[index].size;
+    const file = this.files[index];
+    if (file.objectURL) {
+      URL.revokeObjectURL(file.objectURL);
+    }
+
     this.files.splice(index, 1);
-    this.totalSizePercent = (this.totalSize / 1_000_000) * 100;
+    this.recalculateSize();
   }
 
-  onClear(clear: () => void) {
-    clear();
+  onClear() {
+    this.files.forEach(f => {
+      if (f.objectURL) {
+        URL.revokeObjectURL(f.objectURL);
+      }
+    });
+
     this.files = [];
     this.totalSize = 0;
     this.totalSizePercent = 0;
+  }
+
+  private recalculateSize() {
+    this.totalSize = this.files.reduce((sum, f) => sum + f.size, 0);
+    this.totalSizePercent = Math.min(
+      (this.totalSize / this.MAX_SIZE) * 100,
+      100
+    );
   }
 
   // ---------- UPLOAD + PARSING ----------
